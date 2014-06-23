@@ -1,0 +1,13 @@
+---
+
+- name: Install Gitolite
+  hosts: nodegear_backend
+  user: root
+  tasks:
+    - name: Check gitolite exists
+      shell: ls -l /home/git/gitolite
+      register: has_gitolite
+      ignore_errors: True
+    - name: Install Gitolite if not installed
+      include: tasks/gitolite_install.yml
+      when: has_gitolite|failed

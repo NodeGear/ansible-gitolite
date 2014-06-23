@@ -1,0 +1,34 @@
+---
+
+- name: Add git user
+  user: name=git comment='NG Git' state=present system=yes 
+
+- name: Download Gitolite
+  git: repo=git://github.com/sitaramc/gitolite.git dest=/home/git/gitolite accept_hostkey=yes
+  sudo: yes
+  sudo_user: git
+
+- name: Gitolite mkdir home
+  shell: mkdir -p /home/git/bin
+  sudo: yes
+  sudo_user: git
+
+- name: Install Gitolite
+  shell: cd /home/git/; ./gitolite/install -to /home/git/bin
+  sudo: yes
+  sudo_user: git
+
+- name: Copy SSH Public key
+  copy: src=../files/root.pub dest=/home/git/root.pub owner=git group=git
+  sudo: yes
+  sudo_user: git
+
+- name: Make hooks dir
+  shell: mkdir -p /home/git/local/hooks/repo-specific
+  sudo: yes
+  sudo_user: git
+
+- name: Setup Gitolite
+  shell: cd /home/git/; /home/git/bin/gitolite setup -pk root.pub
+  sudo: yes
+  sudo_user: git
